@@ -1,5 +1,5 @@
 @REM Build for Visual Studio compiler. Run your copy of vcvars32.bat or vcvarsall.bat to setup command-line compiler.
-@set OUT_DIR=Debug
+@set OUT_DIR=Release
 @set OUT_EXE=RainbowToolBox
 @set INCLUDES=/I. /Iimgui /Iimgui\misc\cpp /IFileBrowser /IMemoryEditor /Iimgui\backends /ISDL2\include
 @set SOURCES=src\*.cpp imgui\backends\*.cpp imgui\imgui*.cpp FileBrowser\ImGuiFileBrowser.cpp imgui\misc\cpp\*.cpp

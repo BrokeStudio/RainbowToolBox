@@ -9,7 +9,7 @@ node *create_empty(std::string drive, std::string label, std::string path, NODE_
 node *build_tree(std::string filename, std::string name);
 file_header get_file_header(std::ifstream *src_file);
 int add_element(node *parent, node *elt);
-void remove_element(node *arr, int index);
+void remove_element(node *arr, size_t index);
 int get_node_index(node *arr, std::string path, NODE_TYPES type);
 void release_node(node *node);
 
@@ -19,7 +19,7 @@ node *root = create_empty("/", "root", "", NODE_TYPES::ROOT);
 std::string clean_path(std::string path)
 {
 	// clean name
-	while (path.find("//") != -1)
+	while (path.find("//") != static_cast<size_t>(-1))
 	{
 		size_t p = path.find("//");
 		path = path.substr(0, p) + path.substr(p + 1, path.length() - p + 1);
@@ -288,7 +288,7 @@ int add_element(node *parent, node *elt)
  * @param parent
  * @param index
  */
-void remove_element(node *parent, int index)
+void remove_element(node *parent, size_t index)
 {
 	size_t size = parent->children_count;
 	if (size == 0)

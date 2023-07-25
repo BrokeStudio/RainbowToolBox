@@ -14,7 +14,7 @@
 #CXX = g++
 #CXX = clang++
 
-EXE = out/RainbowToolBox
+EXE = RainbowToolBox
 SOURCES = $(wildcard src/*.cpp)
 SOURCES += $(wildcard imgui/*.cpp)
 SOURCES += $(wildcard imgui/misc/cpp/*.cpp)

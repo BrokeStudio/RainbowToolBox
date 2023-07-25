@@ -39,7 +39,7 @@ enum class COMMAND_ACTIONS
 typedef struct command_t
 {
 	COMMAND_ACTIONS action = COMMAND_ACTIONS::IDLE;
-	//std::string new_value = "";
+	// std::string new_value = "";
 	char new_value[257] = "";
 	node *cur_node = NULL;
 } command_t;
@@ -71,7 +71,7 @@ void show_error(TREE_MANAGER_ERRORS e)
 void reset_command()
 {
 	command.action = COMMAND_ACTIONS::IDLE;
-	//command.new_value = "";
+	// command.new_value = "";
 	command.new_value[0] = '\0';
 	command.cur_node = NULL;
 }
@@ -102,7 +102,7 @@ void show_context_menu_popup(node *cur_node, std::string path)
 
 			if (ImGui::Selectable("Rename drive"))
 			{
-				strcpy_s(command.new_value, cur_node->label.c_str());
+				strcpy(command.new_value, cur_node->label.c_str());
 				command.action = COMMAND_ACTIONS::RENAME_DRIVE;
 			}
 
@@ -116,7 +116,7 @@ void show_context_menu_popup(node *cur_node, std::string path)
 
 			if (ImGui::Selectable("Rename folder"))
 			{
-				strcpy_s(command.new_value, cur_node->path.c_str());
+				strcpy(command.new_value, cur_node->path.c_str());
 				command.action = COMMAND_ACTIONS::RENAME_NODE;
 			}
 
@@ -127,7 +127,7 @@ void show_context_menu_popup(node *cur_node, std::string path)
 		{
 			if (ImGui::Selectable("Rename file"))
 			{
-				strcpy_s(command.new_value, cur_node->path.c_str());
+				strcpy(command.new_value, cur_node->path.c_str());
 				command.action = COMMAND_ACTIONS::RENAME_NODE;
 			}
 
@@ -240,7 +240,7 @@ void render_tree(node *cur_node, std::string full_path = "")
 				node *src_node = *(node **)payload->Data;
 				command.action = COMMAND_ACTIONS::MOVE_NODE;
 				command.cur_node = src_node;
-				strcpy_s(command.new_value, (full_path + src_node->path.substr(src_node->path.rfind("/") + 1)).c_str());
+				strcpy(command.new_value, (full_path + src_node->path.substr(src_node->path.rfind("/") + 1)).c_str());
 			}
 			ImGui::EndDragDropTarget();
 		}
