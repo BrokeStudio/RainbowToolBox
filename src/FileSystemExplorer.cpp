@@ -1,17 +1,24 @@
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "ImGuiFileBrowser.h"
-#include "imgui_memory_editor.h"
-
+#include <cstdint>
 #include <iostream>
-
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 
+// Rainbow Tool Box version
 #include "version.h"
-#include "TreeManager.h"
+
+// imgui
+#include "imgui.h"
+#include "imgui_stdlib.h"
+#include "ImGuiFileBrowser.h"
+#include "imgui_memory_editor.h"
 #include "imgui_helpers.h"
+
+// Tree Manager
+#include "TreeManager.h"
+
+// FontAwesome
+#include "IconsFontAwesome6.h"
 
 // #include <thread>
 
@@ -86,55 +93,55 @@ void show_context_menu_popup(node *cur_node, std::string path)
 		// branch on node type
 		if (cur_node->type == NODE_TYPES::ROOT) // root
 		{
-			if (ImGui::Selectable("Refresh"))
+			if (ImGui::Selectable(ICON_FA_ROTATE " Refresh"))
 				command.action = COMMAND_ACTIONS::REFRESH;
 
-			if (ImGui::Selectable("Create drive"))
+			if (ImGui::Selectable(ICON_FA_PLUS " Create drive"))
 				command.action = COMMAND_ACTIONS::CREATE_DRIVE_1;
 
-			if (ImGui::Selectable("Mount drive"))
+			if (ImGui::Selectable(ICON_FA_PLUG_CIRCLE_PLUS " Mount drive"))
 				command.action = COMMAND_ACTIONS::MOUNT_DRIVE_1;
 		}
 		else if (cur_node->type == NODE_TYPES::DRIVE) // drive root
 		{
-			if (ImGui::Selectable("Add file"))
+			if (ImGui::Selectable(ICON_FA_PLUS " Add file"))
 				command.action = COMMAND_ACTIONS::ADD_FILE;
 
-			if (ImGui::Selectable("Rename drive"))
+			if (ImGui::Selectable(ICON_FA_PEN " Rename drive"))
 			{
 				strcpy(command.new_value, cur_node->label.c_str());
 				command.action = COMMAND_ACTIONS::RENAME_DRIVE;
 			}
 
-			if (ImGui::Selectable("Unmount drive"))
+			if (ImGui::Selectable(ICON_FA_PLUG_CIRCLE_XMARK " Unmount drive"))
 				command.action = COMMAND_ACTIONS::UNMOUNT_DRIVE;
 		}
 		else if (cur_node->type == NODE_TYPES::FOLDER) // folder
 		{
-			if (ImGui::Selectable("Add file"))
+			if (ImGui::Selectable(ICON_FA_PLUS " Add file"))
 				command.action = COMMAND_ACTIONS::ADD_FILE;
 
-			if (ImGui::Selectable("Rename folder"))
+			if (ImGui::Selectable(ICON_FA_PEN " Rename folder"))
 			{
 				strcpy(command.new_value, cur_node->path.c_str());
 				command.action = COMMAND_ACTIONS::RENAME_NODE;
 			}
 
-			if (ImGui::Selectable("Delete folder"))
+			if (ImGui::Selectable(ICON_FA_XMARK " Delete folder"))
 				command.action = COMMAND_ACTIONS::DELETE_NODE;
 		}
 		else if (cur_node->type == NODE_TYPES::FILE) // file
 		{
-			if (ImGui::Selectable("Rename file"))
+			if (ImGui::Selectable(ICON_FA_PEN " Rename file"))
 			{
 				strcpy(command.new_value, cur_node->path.c_str());
 				command.action = COMMAND_ACTIONS::RENAME_NODE;
 			}
 
-			if (ImGui::Selectable("Delete file"))
+			if (ImGui::Selectable(ICON_FA_TRASH_CAN " Delete file"))
 				command.action = COMMAND_ACTIONS::DELETE_NODE;
 
-			if (ImGui::Selectable("View file"))
+			if (ImGui::Selectable(ICON_FA_MAGNIFYING_GLASS " View file"))
 				command.action = COMMAND_ACTIONS::VIEW;
 		}
 		ImGui::EndPopup();
@@ -308,7 +315,7 @@ void render_tree(node *cur_node, std::string full_path = "")
 	return;
 }
 
-void file_explorer_init()
+void file_system_explorer_init()
 {
 #if defined _DEBUG
 	std::string abs_path = "D:/Charles/RainbowToolBox/Debug/";
@@ -351,7 +358,7 @@ void file_explorer_init()
 #endif
 }
 
-void file_explorer_render()
+void file_system_explorer_render()
 {
 	const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
 	// const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
@@ -383,9 +390,9 @@ void file_explorer_render()
 		ImGui::SetNextWindowSize(ImVec2(300, 100));
 		if (ImGui::BeginPopupModal("About", &show_about, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::Text("Rainbow Tool Box %s", RAINBOW_TOOL_BOX_VERSION);
+			ImGui::Text(ICON_FA_RAINBOW " Rainbow Tool Box %s", RAINBOW_TOOL_BOX_VERSION);
 			ImGui::Separator();
-			ImGui::Text("By Antoine Gohin and Charles Ganne.");
+			ImGui::Text("Developed by Antoine Gohin and Charles Ganne.");
 			ImGui::Text("2023, Broke Studio");
 			ImGui::EndPopup();
 		}
@@ -476,11 +483,10 @@ void file_explorer_render()
 	{
 		// file dialog for creating and mounting a drive
 		ImVec2 dialog_size = ImVec2(IM_MIN(viewport->WorkSize.x, 700), IM_MIN(viewport->WorkSize.y, 310));
-		ImGuiFileBrowser::DialogMode mode;
-		if (command.action == COMMAND_ACTIONS::MOUNT_DRIVE_2)
-			mode = ImGuiFileBrowser::DialogMode::OPEN;
-		else if (command.action == COMMAND_ACTIONS::CREATE_DRIVE_2)
+		ImGuiFileBrowser::DialogMode mode = ImGuiFileBrowser::DialogMode::OPEN; // COMMAND_ACTIONS::MOUNT_DRIVE_2
+		if (command.action == COMMAND_ACTIONS::CREATE_DRIVE_2)
 			mode = ImGuiFileBrowser::DialogMode::SAVE;
+
 		if (file_dialog.showFileDialog("Drive file", mode, dialog_size, "*.*"))
 		{
 			try

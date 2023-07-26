@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Custom
+*.o
+
 # User-specific files
 *.rsuser
 *.suo
@@ -70,7 +73,6 @@ ScaffoldingReadMe.txt
 StyleCopReport.xml
 
 # Files built by Visual Studio
-*.o
 *_i.c
 *_p.c
 *_h.h

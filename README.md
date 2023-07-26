@@ -63,6 +63,6 @@ Rainbow Tool Box is licensed under the MIT License, see LICENSE.txt for more inf
 ## Contact
 
 [![Mail](https://badgen.net/static/Email/contact@brokestudio.fr/black?icon=https%3A%2F%2Fbrokestudio.fr%2Fbs.svg)](mailto:contact@brokestudio.fr)
-[![Website](https://badgen.net/static/Website/https:%2F%2Fbrokestudio.fr/F0B92D?icon=https%3A%2F%2Fbrokestudio.fr%2Fbs.svg)](https://brokestudio.fr)  
+[![Website](https://badgen.net/static/Website/https:%2F%2Fbrokestudio.fr/F0B92D?icon=https%3A%2F%2Fbrokestudio.fr%2Fbs.svg)](https://brokestudio.fr)
 [![Discord](https://badgen.net/discord/members/FffVMAuhTX?label=Discord&icon=discord)](https://www.github.gg/FffVMAuhTX)
 [![Twitter](https://badgen.net/static/twitter/@Broke_Studio?icon=twitter)](https://twitter.com/Broke_Studio)

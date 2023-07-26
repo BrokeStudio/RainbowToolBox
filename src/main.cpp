@@ -7,17 +7,26 @@
 // **Prefer using the code in the example_sdl2_opengl3/ folder**
 // See imgui_impl_sdl2.cpp for details.
 
+#include <stdio.h>
+
+// imgui
 #include "imgui.h"
 #include "imgui_stdlib.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl2.h"
 #include "ImGuiFileBrowser.h"
 
-#include <stdio.h>
+// SDL
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-#include "FileExplorer.h"
+// FontAwesome
+#include "IconsFontAwesome6.h"
+#include "fa_solid_900.h"
+#include "fa_regular_400.h"
+
+// File System Explorer
+#include "FileSystemExplorer.h"
 
 // Main code
 int main(int argc, char **argv)
@@ -68,7 +77,6 @@ int main(int argc, char **argv)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-	// SDL_Window *window = SDL_CreateWindow("INL retroprog GUI", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 240, window_flags);
 	SDL_Window *window = SDL_CreateWindow("Rainbow Tools", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, window_flags);
 	SDL_SetWindowMinimumSize(window, 540, 340);
 	SDL_GLContext gl_context = SDL_GL_CreateContext(window);
@@ -119,14 +127,25 @@ int main(int argc, char **argv)
 	// ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
 	// IM_ASSERT(font != nullptr);
 
-	// io.Fonts->AddFontDefault();
-	// io.Fonts->AddFontFromFileTTF("../imgui/misc/fonts/Karla-Regular.ttf", 16.0f);
+	// add default font
+	io.Fonts->AddFontDefault();
+
+	// add FontAwesome fonts
+	float baseFontSize = 13.0f;											 // 13.0f is the size of the default font. Change to the font size you use.
+	float iconFontSize = baseFontSize * 2.0f / 3.0f; // FontAwesome fonts need to have their sizes reduced by 2.0f/3.0f in order to align correctly
+	static const ImWchar icons_ranges[] = {ICON_MIN_FA, ICON_MAX_16_FA, 0};
+	ImFontConfig icons_config;
+	icons_config.MergeMode = true;
+	icons_config.PixelSnapH = true;
+	icons_config.GlyphMinAdvanceX = iconFontSize;
+	io.Fonts->AddFontFromMemoryCompressedBase85TTF(fa_solid_900_compressed_data_base85, iconFontSize, &icons_config, icons_ranges);
+	io.Fonts->AddFontFromMemoryCompressedBase85TTF(fa_regular_400_compressed_data_base85, iconFontSize, &icons_config, icons_ranges);
 
 	// Our state
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	// init file system explorer
-	file_explorer_init();
+	file_system_explorer_init();
 
 	// Main loop
 	bool done = false;
@@ -153,7 +172,7 @@ int main(int argc, char **argv)
 		ImGui::NewFrame();
 
 		// render file system explorer
-		file_explorer_render();
+		file_system_explorer_render();
 
 		// Rendering
 		ImGui::Render();

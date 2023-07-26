@@ -34,6 +34,9 @@
     <Filter Include="FileBrowser\Dirent">
       <UniqueIdentifier>{666eefa3-5943-453a-a9c1-a06a2166c088}</UniqueIdentifier>
     </Filter>
+    <Filter Include="fonts">
+      <UniqueIdentifier>{54685433-9502-4916-9c4f-2c73efb3dd07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -66,11 +69,11 @@
     <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp">
       <Filter>imgui\misc\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="src\FileExplorer.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="FileBrowser\ImGuiFileBrowser.cpp">
       <Filter>FileBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FileSystemExplorer.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,9 +107,6 @@
     <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h">
       <Filter>imgui\misc\cpp</Filter>
     </ClInclude>
-    <ClInclude Include="src\FileExplorer.h">
-      <Filter>Fichiers sources</Filter>
-    </ClInclude>
     <ClInclude Include="MemoryEditor\imgui_memory_editor.h">
       <Filter>MemoryEditor</Filter>
     </ClInclude>
@@ -115,6 +115,15 @@
     </ClInclude>
     <ClInclude Include="FileBrowser\Dirent\dirent.h">
       <Filter>FileBrowser\Dirent</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FileSystemExplorer.h">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="fonts\IconsFontAwesome6.h">
+      <Filter>fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="fonts\IconsFontAwesome6Brands.h">
+      <Filter>fonts</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

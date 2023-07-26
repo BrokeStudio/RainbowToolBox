@@ -36,13 +36,15 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="src\FileSystemExplorer.cpp" />
     <ClCompile Include="src\TreeManager.cpp" />
-    <ClCompile Include="src\FileExplorer.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileBrowser\Dirent\dirent.h" />
     <ClInclude Include="FileBrowser\ImGuiFileBrowser.h" />
+    <ClInclude Include="fonts\IconsFontAwesome6.h" />
+    <ClInclude Include="fonts\IconsFontAwesome6Brands.h" />
     <ClInclude Include="imgui\backends\imgui_impl_opengl2.h" />
     <ClInclude Include="imgui\backends\imgui_impl_sdl2.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -53,8 +55,8 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="MemoryEditor\imgui_memory_editor.h" />
+    <ClInclude Include="src\FileSystemExplorer.h" />
     <ClInclude Include="src\TreeManager.h" />
-    <ClInclude Include="src\FileExplorer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -152,7 +154,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./MemoryEditor;./FileBrowser/Dirent;./FileBrowser;./SDL2/include;./imgui/misc/cpp;./imgui/backends;./imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./fonts;./MemoryEditor;./FileBrowser/Dirent;./FileBrowser;./SDL2/include;./imgui/misc/cpp;./imgui/backends;./imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -173,7 +175,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./MemoryEditor;./FileBrowser/Dirent;./FileBrowser;./SDL2/include;./imgui/misc/cpp;./imgui/backends;./imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./fonts;./MemoryEditor;./FileBrowser/Dirent;./FileBrowser;./SDL2/include;./imgui/misc/cpp;./imgui/backends;./imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -196,7 +198,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>PUBLIC_RELEASE;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>./MemoryEditor;./FileBrowser/Dirent;./FileBrowser;./SDL2/include;./imgui/misc/cpp;./imgui/backends;./imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./fonts;./MemoryEditor;./FileBrowser/Dirent;./FileBrowser;./SDL2/include;./imgui/misc/cpp;./imgui/backends;./imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DiagnosticsFormat>Classic</DiagnosticsFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>Full</Optimization>

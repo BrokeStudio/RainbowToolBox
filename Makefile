@@ -23,7 +23,7 @@ SOURCES += $(wildcard FileBrowser/*.cpp)
 OBJS = $(addsuffix .o, $(basename $(SOURCES)))
 UNAME_S := $(shell uname -s)
 
-CXXFLAGS = -std=c++11 -Iimgui -Iimgui/backends -Iimgui/misc/cpp -IFileBrowser -IMemoryEditor
+CXXFLAGS = -std=c++11 -Iimgui -Iimgui/backends -Iimgui/misc/cpp -IFileBrowser -IMemoryEditor -Ifonts
 CXXFLAGS += -g -Wall -Wformat
 LIBS =
 
