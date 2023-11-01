@@ -41,6 +41,7 @@ enum class COMMAND_ACTIONS
 	RENAME_NODE,
 	DELETE_NODE,
 	VIEW,
+	EXTRACT,
 };
 
 typedef struct command_t
@@ -132,6 +133,12 @@ void show_context_menu_popup(node *cur_node, std::string path)
 		}
 		else if (cur_node->type == NODE_TYPES::FILE) // file
 		{
+			if (ImGui::Selectable(ICON_FA_MAGNIFYING_GLASS " View file"))
+				command.action = COMMAND_ACTIONS::VIEW;
+
+			if (ImGui::Selectable(ICON_FA_DOWNLOAD " Extract file"))
+				command.action = COMMAND_ACTIONS::EXTRACT;
+
 			if (ImGui::Selectable(ICON_FA_PEN " Rename file"))
 			{
 				strcpy(command.new_value, cur_node->path.c_str());
@@ -140,9 +147,6 @@ void show_context_menu_popup(node *cur_node, std::string path)
 
 			if (ImGui::Selectable(ICON_FA_TRASH_CAN " Delete file"))
 				command.action = COMMAND_ACTIONS::DELETE_NODE;
-
-			if (ImGui::Selectable(ICON_FA_MAGNIFYING_GLASS " View file"))
-				command.action = COMMAND_ACTIONS::VIEW;
 		}
 		ImGui::EndPopup();
 	}
@@ -317,37 +321,27 @@ void render_tree(node *cur_node, std::string full_path = "")
 
 void file_system_explorer_init()
 {
-#if defined _DEBUG
-	std::string abs_path = "D:/Charles/RainbowToolBox/Debug/";
-	std::ifstream espFile(abs_path + "esp-file-system.bin");
-	if (!espFile.fail())
-	{
-		unmount_drive("esp");
-		try
-		{
-			mount_drive("esp", abs_path + "esp-file-system.bin");
-		}
-		catch (TREE_MANAGER_ERRORS e)
-		{
-			show_error(e);
-		}
-	}
-	espFile.close();
+#ifdef _WIN32
 
-	std::ifstream sdFile(abs_path + "sd-file-system.bin");
-	if (!sdFile.fail())
+	char *value = nullptr;
+	size_t len;
+
+	if (_dupenv_s(&value, &len, "RAINBOW_ESP_FILESYSTEM_FILE") == 0 && value != nullptr)
 	{
-		unmount_drive("sd");
-		try
-		{
-			mount_drive("sd", abs_path + "sd-file-system.bin");
-		}
-		catch (TREE_MANAGER_ERRORS e)
-		{
-			show_error(e);
-		}
+		mount_drive("esp", std::string(value));
 	}
+
+	free(value);
+
+	if (_dupenv_s(&value, &len, "RAINBOW_SD_FILESYSTEM_FILE") == 0 && value != nullptr)
+	{
+		mount_drive("sd", std::string(value));
+	}
+
+	free(value);
+
 #else
+
 	char const *esp_filesystem_file_path = ::getenv("RAINBOW_ESP_FILESYSTEM_FILE");
 	if (esp_filesystem_file_path != nullptr)
 		mount_drive("esp", std::string(esp_filesystem_file_path));
@@ -355,6 +349,7 @@ void file_system_explorer_init()
 	char const *sd_filesystem_file_path = ::getenv("RAINBOW_SD_FILESYSTEM_FILE");
 	if (sd_filesystem_file_path != nullptr)
 		mount_drive("sd", std::string(sd_filesystem_file_path));
+
 #endif
 }
 
@@ -387,7 +382,7 @@ void file_system_explorer_render()
 	if (show_about)
 	{
 		ImGui::OpenPopup("About");
-		ImGui::SetNextWindowSize(ImVec2(300, 100));
+		ImGui::SetNextWindowSize(ImVec2(350, 100));
 		if (ImGui::BeginPopupModal("About", &show_about, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::Text(ICON_FA_RAINBOW " Rainbow Tool Box %s", RAINBOW_TOOL_BOX_VERSION);
@@ -713,6 +708,20 @@ void file_system_explorer_render()
 			get_file_content(command.cur_node, &file_data, &file_data_size);
 			file_data_path = command.cur_node->path;
 			show_hex_viewer = true;
+		}
+		catch (TREE_MANAGER_ERRORS e)
+		{
+			show_error(e);
+		}
+		reset_command();
+	}
+
+	// extract file in source folder
+	if (command.action == COMMAND_ACTIONS::EXTRACT)
+	{
+		try
+		{
+			extract_file(command.cur_node);
 		}
 		catch (TREE_MANAGER_ERRORS e)
 		{

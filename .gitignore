@@ -5,6 +5,7 @@
 
 # Custom
 *.o
+binary_to_compressed_c.exe
 
 # User-specific files
 *.rsuser

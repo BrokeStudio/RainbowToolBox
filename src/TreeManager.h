@@ -83,4 +83,5 @@ bool add_file(node *parent, std::string filename);
 bool delete_node(node *file_node);
 bool rename_node(node *file_node, std::string new_path);
 
+bool extract_file(node* cur_node);
 bool get_file_content(node *file_node, uint8_t **data, int *data_size);

@@ -336,9 +336,9 @@ node *get_node_by_label(node *parent, std::string label)
  * @brief Get index of a node in parent's children
  *
  * @param parent parent node
- * @param label label to be found
+ * @param path path to be found
  * @param type node type
- * @return int returns 1 if not noud
+ * @return int returns 1 if not found
  */
 int get_node_index(node *parent, std::string path, NODE_TYPES type)
 {
@@ -911,6 +911,52 @@ bool add_file(node *parent, std::string filename)
 	std::string drive_path = drive_node->path;
 	unmount_drive(drive_path);
 	mount_drive(drive_label, drive_filename);
+
+	return true;
+}
+
+/**
+ * @brief
+ *
+ * @param cur_node
+ * @return true
+ * @return false
+ */
+bool extract_file(node *cur_node)
+{
+	uint8_t *file_data = NULL;
+	int file_data_size = 0;
+
+	// get drive index in root
+	int driveIdx = get_node_index(root, cur_node->drive, NODE_TYPES::DRIVE);
+	if (driveIdx < 0)
+		return false;
+
+	node *drive = root->children[driveIdx];
+
+	std::string path = drive->filename.substr(0, drive->filename.find_last_of("\\") + 1);
+	path += drive->drive + "_";
+	std::string file = cur_node->path.substr(cur_node->path.find_first_of("/", 1) + 1);
+	while (file.find("/") != std::string::npos) {
+		file.replace(file.find("/"), 1, "_");
+	}
+	std::string filename = path + file;
+
+	std::ofstream dest_file(filename, std::fstream::binary);
+
+	if (dest_file.fail())
+	{
+		throw TREE_MANAGER_ERRORS::FAILED_TO_CREATE_FILE;
+	}
+
+	get_file_content(cur_node, &file_data, &file_data_size);
+
+	for (size_t i = 0; i < file_data_size; i++)
+	{
+		dest_file.put(file_data[i]);
+	}
+
+	dest_file.close();
 
 	return true;
 }
