@@ -92,18 +92,6 @@ void refresh_tree()
 }
 
 /**
- * @brief Rename a drive
- *
- * @param cur_node drive node
- * @param name new drive name
- */
-void rename_drive(node *cur_node, std::string name)
-{
-  cur_node->drive = name;
-  cur_node->label = name;
-}
-
-/**
  * @brief Create a new drive
  *
  * @param name drive name

@@ -33,7 +33,6 @@ enum class COMMAND_ACTIONS
   MOUNT_DRIVE,
   ADD_FILE,
   CREATE_DRIVE,
-  RENAME_DRIVE,
   UNMOUNT_DRIVE,
   MOVE_NODE,
   RENAME_NODE,
@@ -105,12 +104,6 @@ void show_context_menu_popup(node *cur_node, std::string path)
     {
       if (ImGui::Selectable(ICON_FA_PLUS " Add file"))
         command.action = COMMAND_ACTIONS::ADD_FILE;
-
-      // if (ImGui::Selectable(ICON_FA_PEN " Rename drive"))
-      // {
-      //   strcpy(command.new_value, cur_node->label.c_str());
-      //   command.action = COMMAND_ACTIONS::RENAME_DRIVE;
-      // }
 
       if (ImGui::Selectable(ICON_FA_PLUG_CIRCLE_XMARK " Unmount drive"))
         command.action = COMMAND_ACTIONS::UNMOUNT_DRIVE;
@@ -430,55 +423,6 @@ void file_system_explorer_render()
     {
       if (!ImGui::IsPopupOpen("Drive file"))
         reset_command();
-    }
-  }
-
-  // rename drive
-  if (command.action == COMMAND_ACTIONS::RENAME_DRIVE)
-  {
-    // open popup
-    if (!ImGui::IsPopupOpen("Rename?"))
-      ImGui::OpenPopup("Rename?");
-
-    // always center this window when appearing
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-    // render popup
-    if (ImGui::BeginPopupModal("Rename?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-      bool validate = false, cancel = false;
-      ImGui::Text("Please enter the new name.");
-      if (ImGui::IsWindowAppearing())
-        ImGui::SetKeyboardFocusHere();
-      ImGui::InputText("##name", command.new_value, 257, ImGuiInputTextFlags_CallbackCharFilter, FilterFileName);
-      if (ImGui::IsItemDeactivated())
-      {
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
-          cancel = true;
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)) || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_KeypadEnter)))
-          validate = true;
-      }
-      ImGui::Separator();
-      if (ImGui::Button("OK", ImVec2(120, 0)))
-        validate = true;
-      ImGui::SameLine();
-      if (ImGui::Button("Cancel", ImVec2(120, 0)))
-        cancel = true;
-
-      // validate or cancel
-      if (validate)
-      {
-        rename_drive(command.cur_node, std::string(command.new_value));
-        ImGui::CloseCurrentPopup();
-        reset_command();
-      }
-      if (cancel)
-      {
-        ImGui::CloseCurrentPopup();
-        reset_command();
-      }
-      ImGui::EndPopup();
     }
   }
 
