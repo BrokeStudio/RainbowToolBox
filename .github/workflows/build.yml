@@ -8,12 +8,12 @@ on:
 
 env:
   # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: RainbowToolBox.vcxproj
+  SOLUTION_FILE_PATH: RainbowToolBox.sln
 
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-  BUILD_CONFIGURATION: Release
+  BUILD_CONFIGURATION: Dist
 
 permissions:
   contents: read
@@ -25,11 +25,24 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: abel0b/setup-premake@v2.4
+        with:
+          version: "5.0.0-beta2"
+
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
 
+      - name: Prepare MSVC project files
+        run: premake5 --file=Build.lua vs2022
+
       - name: Build
-        run: msbuild RainbowToolBox.vcxproj -t:rebuild -verbosity:diag -property:Configuration=Release
+        run: msbuild RainbowToolBox.sln -t:rebuild -verbosity:diag -property:Configuration=Dist
+
+      - name: Upload Rainbow File Explorer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rainbow File Explorer (Windows)
+          path: Binaries/windows-x86/Dist
 
   build-ubuntu64:
     runs-on: ubuntu-22.04
@@ -37,11 +50,24 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: abel0b/setup-premake@v2.4
+        with:
+          version: "5.0.0-beta2"
+
       - name: Install Dependencies
         run: sudo apt-get install libsdl2-dev
 
+      - name: Prepare make file
+        run: premake5 --file=Build.lua gmake2
+
       - name: Build
-        run: make
+        run: make config=dist
+
+      - name: Upload Rainbow File Explorer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rainbow File Explorer (Linux)
+          path: Binaries/linux-x86_64/Dist
 
   build-macos:
     runs-on: macos-latest
@@ -49,8 +75,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: abel0b/setup-premake@v2.4
+        with:
+          version: "5.0.0-beta2"
+
       - name: Install Dependencies
         run: brew install sdl2
 
+      - name: Prepare make file
+        run: premake5 --file=Build.lua gmake2
+
       - name: Build
-        run: make
+        run: make config=dist
+
+      - name: Upload Rainbow File Explorer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rainbow File Explorer (macOS)
+          path: Binaries/macosx-universal/Dist

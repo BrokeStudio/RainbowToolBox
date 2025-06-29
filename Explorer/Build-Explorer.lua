@@ -80,9 +80,9 @@ filter "system:linux"
   links { "pthread" }
 
 filter "system:macosx"
-  -- buildoptions "`sdl2-config --cflags`"
-  linkoptions "-framework OpenGL -framework CoreFoundation" -- `sdl2-config --libs`"
-  links { "pthread", "SDL2" }
+  buildoptions "`sdl2-config --cflags`"
+  linkoptions "-framework OpenGL -framework CoreFoundation `sdl2-config --libs`"
+  links { "pthread" }
 
 filter "configurations:Debug"
   kind "ConsoleApp"
@@ -112,7 +112,7 @@ filter { "configurations:Dist", "system:macosx" }
   optimize "On"
   symbols "Off"
   targetdir("../Binaries/" .. OutputDir .. "/RainbowFileExplorer")
-  includedirs
-  {
-    "../macOS"
-  }
+  -- includedirs
+  -- {
+  --   "../macOS"
+  -- }
