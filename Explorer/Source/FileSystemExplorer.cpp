@@ -30,11 +30,9 @@ enum class COMMAND_ACTIONS
 {
   IDLE,
   REFRESH,
-  MOUNT_DRIVE_1,
-  MOUNT_DRIVE_2,
+  MOUNT_DRIVE,
   ADD_FILE,
-  CREATE_DRIVE_1,
-  CREATE_DRIVE_2,
+  CREATE_DRIVE,
   RENAME_DRIVE,
   UNMOUNT_DRIVE,
   MOVE_NODE,
@@ -98,21 +96,21 @@ void show_context_menu_popup(node *cur_node, std::string path)
         command.action = COMMAND_ACTIONS::REFRESH;
 
       if (ImGui::Selectable(ICON_FA_PLUS " Create drive"))
-        command.action = COMMAND_ACTIONS::CREATE_DRIVE_1;
+        command.action = COMMAND_ACTIONS::CREATE_DRIVE;
 
       if (ImGui::Selectable(ICON_FA_PLUG_CIRCLE_PLUS " Mount drive"))
-        command.action = COMMAND_ACTIONS::MOUNT_DRIVE_1;
+        command.action = COMMAND_ACTIONS::MOUNT_DRIVE;
     }
     else if (cur_node->type == NODE_TYPES::DRIVE) // drive root
     {
       if (ImGui::Selectable(ICON_FA_PLUS " Add file"))
         command.action = COMMAND_ACTIONS::ADD_FILE;
 
-      if (ImGui::Selectable(ICON_FA_PEN " Rename drive"))
-      {
-        strcpy(command.new_value, cur_node->label.c_str());
-        command.action = COMMAND_ACTIONS::RENAME_DRIVE;
-      }
+      // if (ImGui::Selectable(ICON_FA_PEN " Rename drive"))
+      // {
+      //   strcpy(command.new_value, cur_node->label.c_str());
+      //   command.action = COMMAND_ACTIONS::RENAME_DRIVE;
+      // }
 
       if (ImGui::Selectable(ICON_FA_PLUG_CIRCLE_XMARK " Unmount drive"))
         command.action = COMMAND_ACTIONS::UNMOUNT_DRIVE;
@@ -321,36 +319,9 @@ void render_tree(node *cur_node, std::string full_path = "")
 
 void file_system_explorer_init()
 {
-#ifdef _WIN32
-
-  char *value = nullptr;
-  size_t len;
-
-  if (_dupenv_s(&value, &len, "RAINBOW_ESP_FILESYSTEM_FILE") == 0 && value != nullptr)
-  {
-    // mount_drive("esp", std::string(value));
-  }
-
-  free(value);
-
-  if (_dupenv_s(&value, &len, "RAINBOW_SD_FILESYSTEM_FILE") == 0 && value != nullptr)
-  {
-    // mount_drive("sd", std::string(value));
-  }
-
-  free(value);
-
-#else
-
-  char const *esp_filesystem_file_path = ::getenv("RAINBOW_ESP_FILESYSTEM_FILE");
-  if (esp_filesystem_file_path != nullptr)
-    mount_drive("esp", std::string(esp_filesystem_file_path));
-
-  char const *sd_filesystem_file_path = ::getenv("RAINBOW_SD_FILESYSTEM_FILE");
-  if (sd_filesystem_file_path != nullptr)
-    mount_drive("sd", std::string(sd_filesystem_file_path));
-
-#endif
+  //
+  // TODO: keep track of previously mounted files and mount them
+  //
 }
 
 void file_system_explorer_render()
@@ -382,13 +353,21 @@ void file_system_explorer_render()
   if (show_about)
   {
     ImGui::OpenPopup("About");
-    ImGui::SetNextWindowSize(ImVec2(350, 100));
+    // ImGui::SetNextWindowSize(ImVec2(350, 200));
     if (ImGui::BeginPopupModal("About", &show_about, ImGuiWindowFlags_AlwaysAutoResize))
     {
-      ImGui::Text(ICON_FA_RAINBOW " Rainbow Tool Box %s", RAINBOW_TOOL_BOX_VERSION);
+      ImGui::Text(ICON_FA_RAINBOW " Rainbow File Explorer %s", RAINBOW_FILE_EXPLORER_VERSION);
       ImGui::Separator();
+      ImGui::Text("2023-2025, Broke Studio");
       ImGui::Text("Developed by Antoine Gohin and Charles Ganne.");
-      ImGui::Text("2023, Broke Studio");
+      ImGui::Separator();
+      ImGui::Text("Powered by");
+      ImGui::SameLine();
+      ImGui::Text("Dear ImGui");
+      // ImGui::TextLinkOpenURL("Dear ImGui", "https://github.com/ocornut/imgui");
+      ImGui::SameLine();
+      ImGui::Text("v" IMGUI_VERSION);
+      ImGui::Text("by Omar Cornut");
       ImGui::EndPopup();
     }
   }
@@ -414,82 +393,32 @@ void file_system_explorer_render()
   if (command.action == COMMAND_ACTIONS::REFRESH)
   {
     refresh_tree();
+    reset_command();
   }
 
-  // create or mount drive part 1 - enter drive name
-  if (command.action == COMMAND_ACTIONS::CREATE_DRIVE_1 || command.action == COMMAND_ACTIONS::MOUNT_DRIVE_1)
-  {
-    if (!ImGui::IsPopupOpen("Drive name?"))
-      ImGui::OpenPopup("Drive name?");
-  }
-
-  // create drive part 2 - select a file to mount a drive
-  if (command.action == COMMAND_ACTIONS::CREATE_DRIVE_2 || command.action == COMMAND_ACTIONS::MOUNT_DRIVE_2)
+  // create/mount drive - select a file
+  if (command.action == COMMAND_ACTIONS::CREATE_DRIVE || command.action == COMMAND_ACTIONS::MOUNT_DRIVE)
   {
     if (!ImGui::IsPopupOpen("Drive file"))
       ImGui::OpenPopup("Drive file");
-  }
-
-  // drive name prompt popup for creating and mounting a drive
-  if (ImGui::IsPopupOpen("Drive name?"))
-  {
-    // always center this window when appearing
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-    // render popup
-    if (ImGui::BeginPopupModal("Drive name?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-      bool validate = false, cancel = false;
-      ImGui::Text("Please enter the drive name.\n");
-      if (ImGui::IsWindowAppearing())
-        ImGui::SetKeyboardFocusHere();
-      ImGui::InputText("##name", command.new_value, 257, ImGuiInputTextFlags_CallbackCharFilter, FilterFileName);
-      if (ImGui::IsItemDeactivated())
-      {
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
-          cancel = true;
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)) || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_KeypadEnter)))
-          validate = true;
-      }
-      ImGui::Separator();
-      if (ImGui::Button("OK", ImVec2(120, 0)))
-        validate = true;
-      ImGui::SameLine();
-      if (ImGui::Button("Cancel", ImVec2(120, 0)))
-        cancel = true;
-
-      // validate or cancel
-      if (validate)
-      {
-        ImGui::CloseCurrentPopup();
-        command.action = static_cast<COMMAND_ACTIONS>(static_cast<int>(command.action) + 1);
-      }
-      if (cancel)
-      {
-        ImGui::CloseCurrentPopup();
-        reset_command();
-      }
-      ImGui::EndPopup();
-    }
   }
 
   if (ImGui::IsPopupOpen("Drive file"))
   {
     // file dialog for creating and mounting a drive
     ImVec2 dialog_size = ImVec2(IM_MIN(viewport->WorkSize.x, 700), IM_MIN(viewport->WorkSize.y, 310));
-    ImGuiFileBrowser::DialogMode mode = ImGuiFileBrowser::DialogMode::OPEN; // COMMAND_ACTIONS::MOUNT_DRIVE_2
-    if (command.action == COMMAND_ACTIONS::CREATE_DRIVE_2)
+    ImGuiFileBrowser::DialogMode mode = ImGuiFileBrowser::DialogMode::OPEN; // COMMAND_ACTIONS::MOUNT_DRIVE
+    if (command.action == COMMAND_ACTIONS::CREATE_DRIVE)
       mode = ImGuiFileBrowser::DialogMode::SAVE;
 
     if (file_dialog.showFileDialog("Drive file", mode, dialog_size, "*.*"))
     {
       try
       {
-        if (command.action == COMMAND_ACTIONS::MOUNT_DRIVE_2)
-          mount_drive(std::string(command.new_value), file_dialog.selected_path);
-        else if (command.action == COMMAND_ACTIONS::CREATE_DRIVE_2)
-          create_drive(std::string(command.new_value), file_dialog.selected_path);
+        if (command.action == COMMAND_ACTIONS::MOUNT_DRIVE)
+          mount_drive(file_dialog.selected_fn, file_dialog.selected_path);
+        else if (command.action == COMMAND_ACTIONS::CREATE_DRIVE)
+          create_drive(file_dialog.selected_fn, file_dialog.selected_path);
       }
       catch (TREE_MANAGER_ERRORS e)
       {
