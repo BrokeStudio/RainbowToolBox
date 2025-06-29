@@ -1,10 +1,10 @@
-project "Explorer"
+project "RainbowFileExplorer"
 language "C++"
 cppdialect "C++17"
 targetdir "Binaries/%{cfg.buildcfg}"
 debugdir "Binaries/%{cfg.targetdir}"
 staticruntime "off"
-targetname "Explorer"
+targetname "RainbowFileExplorer"
 
 files
 {
@@ -103,7 +103,7 @@ filter { "configurations:Dist", "system:windows or linux" }
   runtime "Release"
   optimize "On"
   symbols "Off"
-  targetdir("../Binaries/" .. OutputDir .. "/Explorer")
+  targetdir("../Binaries/" .. OutputDir .. "/RainbowFileExplorer")
 
 filter { "configurations:Dist", "system:macosx" }
   kind "ConsoleApp"
@@ -111,7 +111,7 @@ filter { "configurations:Dist", "system:macosx" }
   runtime "Release"
   optimize "On"
   symbols "Off"
-  targetdir("../Binaries/" .. OutputDir .. "/Explorer")
+  targetdir("../Binaries/" .. OutputDir .. "/RainbowFileExplorer")
   includedirs
   {
     "../macOS"
