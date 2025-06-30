@@ -13,6 +13,3 @@ Makefile
 
 # Exclude
 !Vendor/Binaries/
-
-# Windows
-Windows/Resources/resources.aps

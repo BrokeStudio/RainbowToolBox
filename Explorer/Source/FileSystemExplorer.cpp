@@ -635,10 +635,10 @@ void file_system_explorer_render()
 
   ImGui::End();
 
-#ifdef _DEBUG
-  if (show_demo_window)
-    ImGui::ShowDemoWindow(&show_demo_window);
-#endif
+  // #ifdef _DEBUG
+  //   if (show_demo_window)
+  //     ImGui::ShowDemoWindow(&show_demo_window);
+  // #endif
 }
 
 void show_status_bar_window(void)

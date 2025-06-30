@@ -32,11 +32,17 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
 
+      - name: Build SDL2 statically
+        run: |
+          git clone https://github.com/libsdl-org/SDL.git
+          cd SDL
+          git checkout SDL2
+          cd VisualC
+          msbuild SDL.sln -target:SDL2:Rebuild -verbosity:diag -property:Configuration=Release -property:Platform=Win32 -property:DefineConstants="HAVE_LIBC;SDL_STATIC_LIB" -property:ConfigurationType=StaticLibrary -property:RuntimeLibrary=MT
+          copy /Y Win32/Debug/*.* ../../External/SDL2/lib/x86-static-release
+
       - name: Prepare MSVC project files
         run: premake5 --file=Build.lua vs2022
-
-      - name: Build
-        run: msbuild RainbowToolBox.sln -t:rebuild -verbosity:diag -property:Configuration=Dist
 
       - name: Upload Rainbow File Explorer
         uses: actions/upload-artifact@v4
@@ -44,52 +50,68 @@ jobs:
           name: Rainbow File Explorer (Windows)
           path: Binaries/windows-x86/Dist
 
-  build-ubuntu64:
-    runs-on: ubuntu-22.04
+  # build-ubuntu64:
+  #   runs-on: ubuntu-22.04
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - uses: abel0b/setup-premake@v2.4
-        with:
-          version: "5.0.0-beta2"
+  #     - uses: abel0b/setup-premake@v2.4
+  #       with:
+  #         version: "5.0.0-beta2"
 
-      - name: Install Dependencies
-        run: sudo apt-get install libsdl2-dev
+  #     - name: Install dependencies
+  #       run: sudo apt-get install libgl1-mesa-dev
 
-      - name: Prepare make file
-        run: premake5 --file=Build.lua gmake2
+  #     # - name: Install Dependencies
+  #     #   run: sudo apt-get install libsdl2-dev
 
-      - name: Build
-        run: make config=dist
+  #     # - name: Install dependencies
+  #     #   run: |
+  #     #     sudo apt-get update
+  #     #     sudo apt-get install -y build-essential libx11-dev libxext-dev libxrandr-dev libxrender-dev libxinerama-dev libxi-dev libxcursor-dev libasound2-dev libpulse-dev libgl-dev libgl1-mesa-dev libgl1
 
-      - name: Upload Rainbow File Explorer
-        uses: actions/upload-artifact@v4
-        with:
-          name: Rainbow File Explorer (Linux)
-          path: Binaries/linux-x86_64/Dist
+  #     # - name: Build SDL2 statically without DYNAPI
+  #     #   run: |
+  #     #     git clone https://github.com/libsdl-org/SDL.git
+  #     #     cd SDL
+  #     #     git checkout SDL2
+  #     #     mkdir build
+  #     #     cd build
+  #     #     ../configure --enable-static --disable-shared
+  #     #     make
+  #     #     sudo make install
 
-  build-macos:
-    runs-on: macos-latest
+  #     - name: Generate make file
+  #       run: premake5 --cc=clang --file=Build.lua gmake2
 
-    steps:
-      - uses: actions/checkout@v3
+  #     - name: Build
+  #       run: make config=dist
 
-      - uses: abel0b/setup-premake@v2.4
-        with:
-          version: "5.0.0-beta2"
+  #     - name: Upload Rainbow File Explorer
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: Rainbow File Explorer (Linux)
+  #         path: Binaries/linux-x86_64/Dist
 
-      - name: Install Dependencies
-        run: brew install sdl2
+  # build-macos:
+  #   runs-on: macos-13
 
-      - name: Prepare make file
-        run: premake5 --file=Build.lua gmake2
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Build
-        run: make config=dist
+  #     - uses: abel0b/setup-premake@v2.4
+  #       with:
+  #         version: "5.0.0-beta2"
 
-      - name: Upload Rainbow File Explorer
-        uses: actions/upload-artifact@v4
-        with:
-          name: Rainbow File Explorer (macOS)
-          path: Binaries/macosx-universal/Dist
+  #     - name: Generate make file
+  #       run: premake5 --cc=clang --file=Build.lua gmake2
+
+  #     - name: Build
+  #       run: make config=dist
+
+  #     - name: Upload Rainbow File Explorer
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: Rainbow File Explorer (macOS)
+  #         path: Binaries/macosx-universal/Dist
