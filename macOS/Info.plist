@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>CFBundleExecutable</key>
+    <string>RainbowFileExplorer</string>
+    <key>CFBundleGetInfoString</key>
+    <string>Rainbow File Explorer</string>
+    <key>CFBundleIconFile</key>
+    <string>Rainbow.png</string>
+    <key>CFBundleIdentifier</key>
+    <string>inl.retro.gui</string>
+    <key>CFBundleName</key>
+    <string>Rainbow File Explorer</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+  </dict>
+</plist>

@@ -1,12 +1,11 @@
 -- premake5.lua
 workspace "RainbowToolBox"
-  -- architecture "x64"
   configurations { "Debug", "Release", "Dist" }
   startproject "Explorer"
 
   -- Workspace-wide build options for MSVC
   filter "system:windows"
-    architecture "x86"
+    platforms { "x86", "x86_64" }
     buildoptions { "/EHsc", "/Zc:preprocessor", "/Zc:__cplusplus" }
     linkoptions { "/SAFESEH:NO" } -- Image Has Safe Exception Handers: No
 

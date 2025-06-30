@@ -5,6 +5,12 @@
 #include <cstring>
 #include "TreeManager.h"
 
+#if __APPLE__
+#include "macos.h"
+#endif
+
+#define TMP_FILENAME "tmp_fs.bin"
+
 // functions declarations
 node *create_empty(std::string drive, std::string label, std::string path, NODE_TYPES type);
 node *build_tree(std::string filename, std::string name);
@@ -16,6 +22,23 @@ void release_node(node *node);
 
 // initialize root node
 node *root = create_empty("/", "root", "", NODE_TYPES::ROOT);
+
+bool get_tmp_filepath(std::string &outputPath)
+{
+  outputPath.clear();
+#if __APPLE__
+  if (getResourcesPath(outputPath) == -1)
+  {
+    // APP_LOG(LogTypes_Error, L_INI "Couldn't get resources path");
+    return false;
+  }
+#else
+  outputPath = "./";
+#endif
+
+  outputPath += TMP_FILENAME;
+  return true;
+}
 
 std::string clean_path(std::string path)
 {
@@ -191,14 +214,20 @@ void unmount_drive(std::string path)
 }
 
 /**
- * @brief Delete the passed file name and rename ./tmp.bin file to the passed name
+ * @brief Delete the passed file name and rename temporary fs bin file to the passed name
  *
  * @param filename
  */
 bool rename_tmp(std::string filename)
 {
-  remove(filename.c_str());
-  if (std::rename("./tmp.bin", filename.c_str()) != 0)
+  if (std::remove(filename.c_str()) != 0)
+    return false;
+
+  std::string tmpFilePath;
+  if (!get_tmp_filepath(tmpFilePath))
+    return false; // TODO: throw error
+
+  if (std::rename(tmpFilePath.c_str(), filename.c_str()) != 0)
     return false;
 
   return true;
@@ -439,7 +468,11 @@ bool delete_node(node *cur_node)
     throw TREE_MANAGER_ERRORS::FAILED_TO_OPEN_SOURCE_FILE;
 
   // open temporary destination file
-  std::fstream tmp_file("./tmp.bin", std::fstream::out | std::fstream::binary);
+  std::string tmpFilePath;
+  if (!get_tmp_filepath(tmpFilePath))
+    return false; // TODO: throw error
+
+  std::fstream tmp_file(tmpFilePath, std::fstream::out | std::fstream::binary);
 
   // error check
   if (tmp_file.fail())
@@ -582,7 +615,10 @@ bool rename_node(node *cur_node, std::string new_path)
       throw TREE_MANAGER_ERRORS::FILE_ALREADY_EXISTS;
 
     // open temporary destination file
-    dest_file.open("./tmp.bin", std::fstream::out | std::fstream::binary);
+    std::string tmpFilePath;
+    if (!get_tmp_filepath(tmpFilePath))
+      return false; // TODO: throw error
+    dest_file.open(tmpFilePath, std::fstream::out | std::fstream::binary);
 
     // error check
     if (dest_file.fail())
@@ -623,7 +659,10 @@ bool rename_node(node *cur_node, std::string new_path)
     dest_file.seekg(size, std::fstream::beg);
 
     // open temporary file to copy source file without the file
-    tmp_file = new std::fstream("./tmp.bin", std::fstream::out | std::fstream::binary);
+    std::string tmpFilePath;
+    if (!get_tmp_filepath(tmpFilePath))
+      return false; // TODO: throw error
+    tmp_file = new std::fstream(tmpFilePath, std::fstream::out | std::fstream::binary);
 
     // error check
     if (tmp_file->fail())
