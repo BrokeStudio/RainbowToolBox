@@ -325,7 +325,7 @@ void file_system_explorer_render()
   ImGuiViewport *viewport = ImGui::GetMainViewport();
   ImGui::SetNextWindowPos(viewport->WorkPos);
   ImGui::SetNextWindowSize(viewport->WorkSize);
-  ImGui::SetNextWindowViewport(viewport->ID);
+  // ImGui::SetNextWindowViewport(viewport->ID);
 
   ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
   ImGui::Begin("Hello, world!", NULL, window_flags); // Create a window called "Hello, world!" and append into it.
@@ -339,7 +339,8 @@ void file_system_explorer_render()
 #endif
 
   // About section
-  ImGui::SameLine(ImGui::GetWindowWidth() - 52);
+  // ImGui::SameLine(ImGui::GetWindowWidth() - 152);
+  ImGui::SameLine();
   if (ImGui::Button("About"))
     show_about = true;
 
@@ -536,9 +537,9 @@ void file_system_explorer_render()
       ImGui::InputText("##name", command.new_value, 257, ImGuiInputTextFlags_CallbackCharFilter, FilterFileName);
       if (ImGui::IsItemDeactivated())
       {
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+        if (ImGui::IsKeyPressed(ImGuiKey_Escape))
           cancel = true;
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)) || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_KeypadEnter)))
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter) || ImGui::IsKeyPressed(ImGuiKey_KeypadEnter))
           validate = true;
       }
       ImGui::Separator();
