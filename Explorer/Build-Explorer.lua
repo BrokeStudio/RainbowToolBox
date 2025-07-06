@@ -72,7 +72,7 @@ filter { "system:windows", "configurations:Dist" }
   runtime "Release"
   optimize "On"
   symbols "Off"
-  targetdir("../Binaries/" .. OutputDir .. "/Demo")
+  targetdir("../Binaries/" .. OutputDir .. "/RainbowFileExplorer")
   entrypoint "mainCRTStartup"
 
 filter "platforms:x86"
@@ -146,6 +146,10 @@ filter "system:macosx"
     "`sdl2-config --libs`",
     "-framework OpenGL",
     "-framework CoreFoundation"
+  }
+  includedirs
+  {
+    "../macOS"
   }
 
 filter { "system:macosx", "configurations:Dist" }
