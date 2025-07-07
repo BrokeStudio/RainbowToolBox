@@ -234,7 +234,7 @@ namespace imgui_addons
     ImVec2 sw_content_size = sw_size - style.WindowPadding * 2.0;
     ImVec2 nw_size = ImVec2(pw_content_size.x - style.ItemSpacing.x - sw_size.x, sw_size.y);
 
-    ImGui::BeginChild("##NavigationWindow", nw_size, true, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar);
+    ImGui::BeginChild("##NavigationWindow", nw_size, ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY, 0);
 
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.882f, 0.745f, 0.078f, 1.0f));
     for (std::vector<std::string>::size_type i = 0; i < current_dirlist.size(); i++)
@@ -300,8 +300,7 @@ namespace imgui_addons
     ImGui::EndChild();
 
     ImGui::SameLine();
-    ImGui::BeginChild("##SearchWindow", sw_size, true, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar);
-
+    ImGui::BeginChild("##SearchWindow", sw_size, ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY, 0);
     // Render Search/Filter bar
     float marker_width = ImGui::CalcTextSize("(?)").x + style.ItemSpacing.x;
     if (filter.Draw("##SearchBar", sw_content_size.x - marker_width) || filter_dirty)
