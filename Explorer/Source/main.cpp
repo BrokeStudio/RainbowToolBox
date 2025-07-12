@@ -92,7 +92,7 @@ int main(int argc, char **argv)
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
   float main_scale = ImGui_ImplSDL2_GetContentScaleForDisplay(0);
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-  SDL_Window *window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)(540 * main_scale), (int)(340 * main_scale), window_flags);
+  SDL_Window *window = SDL_CreateWindow("Rainbow File Explorer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)(540 * main_scale), (int)(340 * main_scale), window_flags);
   if (window == nullptr)
   {
     printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
