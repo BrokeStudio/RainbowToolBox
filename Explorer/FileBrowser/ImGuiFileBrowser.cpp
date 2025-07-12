@@ -116,12 +116,12 @@ namespace imgui_addons
   {
 
     dialog_mode = mode;
-    // ImGuiIO& io = ImGui::GetIO();
+    // ImGuiIO &io = ImGui::GetIO();
     // max_size.x = io.DisplaySize.x;
     // max_size.y = io.DisplaySize.y;
-    max_size.x = ImGui::GetMainViewport()->WorkSize.x; // io.DisplaySize.x;
-    max_size.y = ImGui::GetMainViewport()->WorkSize.y; // io.DisplaySize.y;
-    ImGui::SetNextWindowSizeConstraints(min_size, max_size);
+    // max_size.x = ImGui::GetMainViewport()->WorkSize.x;
+    // max_size.y = ImGui::GetMainViewport()->WorkSize.y;
+    ImGui::SetNextWindowSizeConstraints(min_size, ImVec2(FLT_MAX, FLT_MAX)); // max_size);
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     ImGui::SetNextWindowSize(ImVec2(std::max<float>(sz_xy.x, min_size.x), std::max<float>(sz_xy.y, min_size.y)), ImGuiCond_Appearing);
@@ -290,7 +290,9 @@ namespace imgui_addons
         {
           ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 0.01f));
           ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+          ImGui::PushID(i);
           ImGui::ArrowButtonEx("##Right", ImGuiDir_Right, ImVec2(frame_height, frame_height), ImGuiItemFlags_Disabled);
+          ImGui::PopID();
           ImGui::SameLine(0, 0);
           ImGui::PopStyleColor(2);
         }
