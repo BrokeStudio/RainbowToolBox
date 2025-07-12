@@ -120,12 +120,7 @@ namespace imgui_addons
   {
 
     dialog_mode = mode;
-    // ImGuiIO &io = ImGui::GetIO();
-    // max_size.x = io.DisplaySize.x;
-    // max_size.y = io.DisplaySize.y;
-    // max_size.x = ImGui::GetMainViewport()->WorkSize.x;
-    // max_size.y = ImGui::GetMainViewport()->WorkSize.y;
-    ImGui::SetNextWindowSizeConstraints(min_size, ImVec2(FLT_MAX, FLT_MAX)); // max_size);
+    ImGui::SetNextWindowSizeConstraints(min_size, ImVec2(FLT_MAX, FLT_MAX));
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     ImGui::SetNextWindowSize(ImVec2(std::max<float>(sz_xy.x, min_size.x), std::max<float>(sz_xy.y, min_size.y)), ImGuiCond_Appearing);

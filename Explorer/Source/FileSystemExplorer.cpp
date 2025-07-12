@@ -336,11 +336,11 @@ void file_system_explorer_render()
     show_demo_window = true;
     ImGui::SetWindowFocus("Dear ImGui Demo");
   }
+  ImGui::SameLine();
 #endif
 
   // About section
   // ImGui::SameLine(ImGui::GetWindowWidth() - 152);
-  ImGui::SameLine();
   if (ImGui::Button("About"))
     show_about = true;
 
