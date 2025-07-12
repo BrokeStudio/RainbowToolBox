@@ -35,6 +35,10 @@
 // File System Explorer
 #include "FileSystemExplorer.h"
 
+#ifdef __APPLE__
+#include "macos.h"
+#endif
+
 // Main code
 int main(int argc, char **argv)
 {
@@ -110,6 +114,17 @@ int main(int argc, char **argv)
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
   // io.ConfigViewportsNoAutoMerge = true;
   // io.ConfigViewportsNoTaskBarIcon = true;
+
+#ifdef __APPLE__
+  std::string iniPath;
+#ifdef _DIST
+  getResourcesPath(iniPath); // TODO: handle error
+#else
+  getExecutablePath(iniPath); // TODO: handle error
+#endif
+  iniPath += "imgui.ini";
+  io.IniFilename = iniPath.c_str();
+#endif
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
