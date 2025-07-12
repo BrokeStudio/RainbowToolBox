@@ -5,7 +5,7 @@
 #include <mach-o/dyld.h>
 
 /*
-  Use this instead:
+  TODO: use this instead:
     - https://wiki.libsdl.org/SDL2/SDL_GetPrefPath
     - https://wiki.libsdl.org/SDL2/SDL_GetBasePath
 */
@@ -23,20 +23,30 @@ static int getExecutablePath(std::string &outputPath)
   {
     char *dir;
     exePath[sizeof(exePath) - 1] = 0;
-    // printf("EXE Path: '%s' \n", exePath );
 
     dir = ::dirname(exePath);
 
     if (dir)
     {
-      // printf("DIR Path: '%s' \n", dir );
       outputPath.assign(dir);
+      outputPath.append("/");
       return 0;
     }
   }
 #endif
 
   return -1;
+}
+
+static int getBundlePath(std::string &outputPath)
+{
+  outputPath.clear();
+  if (getExecutablePath(outputPath) == -1)
+  {
+    return -1;
+  }
+  outputPath += "../../../";
+  return 0;
 }
 
 static int getResourcesPath(std::string &outputPath)
@@ -46,7 +56,7 @@ static int getResourcesPath(std::string &outputPath)
   {
     return -1;
   }
-  outputPath += "/../Resources/";
+  outputPath += "../Resources/";
   return 0;
 }
 

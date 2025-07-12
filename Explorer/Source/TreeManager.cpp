@@ -27,7 +27,11 @@ bool get_tmp_filepath(std::string &outputPath)
 {
   outputPath.clear();
 #if __APPLE__
+#if _DIST
   if (getResourcesPath(outputPath) == -1)
+#else
+  if (getExecutablePath(outputPath) == -1)
+#endif
   {
     // APP_LOG(LogTypes_Error, L_INI "Couldn't get resources path");
     return false;

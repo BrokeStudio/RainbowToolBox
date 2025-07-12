@@ -5,6 +5,10 @@
 #include "ImGuiFileBrowser.h"
 #include "imgui_internal.h"
 
+#ifdef __APPLE__
+#include "macos.h"
+#endif
+
 #include <iostream>
 #include <functional>
 #include <climits>
@@ -1242,7 +1246,14 @@ namespace imgui_addons
     if (path_max_def)
       buffer = new char[PATH_MAX];
 
+#if __APPLE__
+    getExecutablePath(current_path);
+    current_path.pop_back(); // remove final /
+    char *real_path = realpath(current_path.c_str(), buffer);
+#else
     char *real_path = realpath("./", buffer);
+#endif
+
     if (real_path == nullptr)
     {
       current_path = "/";
