@@ -1,19 +1,7 @@
-name: build
+name: Build
 
 on:
-  push:
-    branches: ["master"]
-  pull_request:
-    branches: ["master"]
-
-env:
-  # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: RainbowToolBox.sln
-
-  # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-  BUILD_CONFIGURATION: Dist
+  workflow_call:
 
 permissions:
   contents: read
@@ -21,91 +9,157 @@ permissions:
 jobs:
   windows:
     strategy:
+      fail-fast: false
       matrix:
         platform:
-          [
-            { arch: "Win32", SDL2libPath: "x86", binPath: "x86" },
-            { arch: "x64", SDL2libPath: "x64", binPath: "x86_64" },
-          ]
-      fail-fast: false
-    runs-on: windows-2025
+          - arch: Win32
+            bin_path: x86
+          - arch: x64
+            bin_path: x86_64
+    runs-on: windows-2025-vs2026
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
-      - uses: abel0b/setup-premake@v2.4
+      # Node 24 support; no setup-premake release newer than v2.4 yet.
+      - uses: abel0b/setup-premake@de7d79047789622064f7a2d251e929fadd166707
         with:
-          version: "5.0.0-beta2"
+          version: "5.0.0-beta8"
 
       - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
-
-      - name: Build SDL2 statically
-        run: |
-          git clone https://github.com/libsdl-org/SDL.git
-          cd SDL
-          git checkout release-2.32.x
-          cmake -S . -B build -DSDL_STATIC=ON -DSDL_SHARED=OFF -DSDL_TEST_LIBRARY=OFF -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" -A ${{ matrix.platform.arch }}
-          cmake --build build --config Release
-          Copy-Item "build\Release\SDL2-static.lib" -destination "..\External\SDL2\lib\${{ matrix.platform.SDL2libPath }}-static-release" -force
+        uses: microsoft/setup-msbuild@v3
 
       - name: Prepare MSVC project files
-        run: premake5 --file=Build.lua vs2022
+        run: premake5 --file=Build.lua vs2026
 
       - name: Build
-        run: msbuild RainbowToolBox.sln -nologo -t:rebuild -verbosity:detailed -clp:ForceConsoleColor -m -property:Configuration=Dist -p:Platform=${{ matrix.platform.arch }}
+        run: msbuild RainbowToolbox.slnx -nologo -t:rebuild -verbosity:normal -clp:ForceConsoleColor -m -property:Configuration=Dist -p:Platform=${{ matrix.platform.arch }}
 
-      - name: Upload Rainbow File Explorer
-        uses: actions/upload-artifact@v4
+      - name: Upload RainbowToolbox
+        uses: actions/upload-artifact@v7
         with:
-          name: Rainbow File Explorer (Windows - ${{ matrix.platform.arch }})
-          path: Binaries/windows-${{ matrix.platform.binPath }}/Dist
+          name: RainbowToolbox_Windows_${{ matrix.platform.arch }}
+          if-no-files-found: error
+          path: Binaries/windows-${{ matrix.platform.bin_path }}/Dist/RainbowToolbox
 
   linux-ubuntu64:
     runs-on: ubuntu-22.04
-
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
-      - uses: abel0b/setup-premake@v2.4
+      # Node 24 support; no setup-premake release newer than v2.4 yet.
+      - uses: abel0b/setup-premake@de7d79047789622064f7a2d251e929fadd166707
         with:
           version: "5.0.0-beta2"
 
       - name: Install dependencies
-        run: sudo apt-get install libsdl2-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential clang libsdl2-dev libudev-dev libgl-dev
 
-      - name: Generate make file
+      - name: Generate make files
         run: premake5 --cc=clang --file=Build.lua gmake2
 
       - name: Build
         run: make config=dist
 
-      - name: Upload Rainbow File Explorer
-        uses: actions/upload-artifact@v4
+      - name: Upload RainbowToolbox
+        uses: actions/upload-artifact@v7
         with:
-          name: Rainbow File Explorer (Linux)
-          path: Binaries/linux-x86_64/Dist
+          name: RainbowToolbox_Linux
+          if-no-files-found: error
+          path: Binaries/linux-x86_64/Dist/RainbowToolbox
 
   macos:
-    runs-on: macos-13
-
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-15
+            premake_version: 5.0.0-beta8
+            artifact_suffix: AppleSilicon
+          - arch: x86_64
+            runner: macos-15-intel
+            premake_version: 5.0.0-beta2
+            artifact_suffix: Intel
+    runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
-      - uses: abel0b/setup-premake@v2.4
+      # Node 24 support; no setup-premake release newer than v2.4 yet.
+      - uses: abel0b/setup-premake@de7d79047789622064f7a2d251e929fadd166707
         with:
-          version: "5.0.0-beta2"
+          version: ${{ matrix.premake_version }}
 
-      - name: Install Dependencies
-        run: brew install sdl2
+      - name: Make Premake executable
+        run: chmod +x "$GITHUB_WORKSPACE/.premake/premake5"
 
-      - name: Prepare make file
-        run: premake5 --file=Build.lua gmake2
+      - name: Download SDL2 framework
+        run: |
+          SDL_DMG="$RUNNER_TEMP/SDL2-2.32.10.dmg"
+          SDL_MOUNT_POINT="$RUNNER_TEMP/SDL2-mount"
+
+          curl -L \
+            -o "$SDL_DMG" \
+            "https://github.com/libsdl-org/SDL/releases/download/release-2.32.10/SDL2-2.32.10.dmg"
+          mkdir -p "$SDL_MOUNT_POINT" External/SDL2-macOS
+          hdiutil attach "$SDL_DMG" \
+            -readonly \
+            -nobrowse \
+            -mountpoint "$SDL_MOUNT_POINT"
+          ditto \
+            "$SDL_MOUNT_POINT/SDL2.framework" \
+            "External/SDL2-macOS/SDL2.framework"
+          hdiutil detach "$SDL_MOUNT_POINT"
+
+      - name: Prepare make files
+        run: premake5 --cc=clang --arch=${{ matrix.arch }} --file=Build.lua gmake
 
       - name: Build
-        run: make config=dist
+        run: make config=dist verbose=1
 
-      - name: Upload Rainbow File Explorer
-        uses: actions/upload-artifact@v4
+      - name: Locate macOS app
+        run: |
+          APP_PATH="$(find Binaries -type d -name RainbowToolbox.app -print -quit)"
+          if [ -z "$APP_PATH" ]; then
+            echo "RainbowToolbox.app was not found"
+            exit 1
+          fi
+          echo "APP_PATH=$APP_PATH" >> "$GITHUB_ENV"
+
+      - name: Sign macOS app
+        run: |
+          codesign --force --sign - \
+            "$APP_PATH/Contents/Frameworks/SDL2.framework"
+          codesign --force --sign - "$APP_PATH"
+
+      - name: Verify macOS app
+        run: |
+          EXECUTABLE_PATH="$APP_PATH/Contents/MacOS/RainbowToolbox"
+          plutil -lint "$APP_PATH/Contents/Info.plist"
+          test -x "$EXECUTABLE_PATH"
+          test -f "$APP_PATH/Contents/Resources/AppIcon.icns"
+          lipo "$EXECUTABLE_PATH" -verify_arch ${{ matrix.arch }}
+          lipo \
+            "$APP_PATH/Contents/Frameworks/SDL2.framework/Versions/A/SDL2" \
+            -verify_arch ${{ matrix.arch }}
+          codesign --verify --deep --strict --verbose=4 "$APP_PATH"
+
+      - name: Package macOS app
+        run: |
+          PACKAGE_DIR="$RUNNER_TEMP/RainbowToolbox-package/RainbowToolbox"
+          mkdir -p "$PACKAGE_DIR"
+          ditto "$APP_PATH" "$PACKAGE_DIR/RainbowToolbox.app"
+          cp README.txt "$PACKAGE_DIR/README.txt"
+          tar -czf \
+            "$RUNNER_TEMP/RainbowToolbox-${{ matrix.artifact_suffix }}.tar.gz" \
+            -C "$RUNNER_TEMP/RainbowToolbox-package" \
+            RainbowToolbox
+
+      - name: Upload RainbowToolbox app
+        uses: actions/upload-artifact@v7
         with:
-          name: Rainbow File Explorer (macOS)
-          path: Binaries/macosx-universal/Dist
+          name: RainbowToolbox_macOS_${{ matrix.artifact_suffix }}
+          path: ${{ runner.temp }}/RainbowToolbox-${{ matrix.artifact_suffix }}.tar.gz
+          archive: false
+          if-no-files-found: error

@@ -1,15 +1,27 @@
+dist/
+
+# OS X Metadata
+.DS_Store
+
+# VSCode Metadata
+.vscode
+
 # Directories
 .vs/
-.vscode/
 Binaries/
+Common/generated/
 
 # Files
 *.vcxproj
 *.vcxproj.user
 *.vcxproj.filters
 *.sln
+*.slnx
 *.log
 Makefile
 
 # Exclude
 !Vendor/Binaries/
+
+# Windows
+Windows/Resources/resources.aps

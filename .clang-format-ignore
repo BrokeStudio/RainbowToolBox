@@ -1,0 +1,13 @@
+firmware/avr_bootloader/**
+firmware/build_*/**
+firmware/usbdrv_Vusb/**
+firmware/include_stm/**
+
+host/.vs
+host/Binaries
+host/Core/include/win_getopt.h
+host/Dist
+host/drivers
+host/External
+host/Vendor
+host/Windows

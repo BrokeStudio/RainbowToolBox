@@ -1,68 +1,106 @@
-# Rainbow Tool Box
+# Rainbow Toolbox
 
-[![Build Status](https://github.com/BrokeStudio/RainbowToolBox/workflows/build/badge.svg)](https://github.com/BrokeStudio/RainbowToolBox/actions?workflow=build)
-![GitHub License](https://badgen.net/github/license/BrokeStudio/RainbowToolBox)
+[![Build Status](https://github.com/BrokeStudio/RainbowToolbox/actions/workflows/build/badge.svg)](https://github.com/BrokeStudio/RainbowToolbox/actions?workflow=build)
+![GitHub License](https://badgen.net/github/license/BrokeStudio/RainbowToolbox)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
 
-The **Rainbow Tool Box** is designed to helped developers to create games/software using our Wi-Fi enabled boards named [**Rainbow**](https://github.com/BrokeStudio/rainbow-lib).
+Rainbow Toolbox provides graphical and command-line tools for developing games and software for [Rainbow](https://github.com/BrokeStudio/rainbow-net) boards.
 
-The **Rainbow Tool Box** offers:
+## Tools
 
-- [File System Explorer](#file-system-explorer): create/modify your Rainbow file system files.
-- [Patch File Builder](#patch-file-builder): create patch file to be used with the Rainbow bootrom or with your own code.
+### File System Explorer
 
-## File System Explorer
+Create, mount, inspect and modify Rainbow file system images from the graphical application or command line.
 
-When emulating Rainbow boards, we also want to emulate the ESP8266 Flash Memory and/or the on-board SD card. To do this we created a simple file system format contained in a single file. This tool allows you to easily create/modify those files.
+```console
+RainbowToolbox fs --help
+```
 
-### File System File Format
+[Read the File System Explorer documentation](docs/file-system-explorer.md).
 
-A file system file consists of the following sections, in order:
+[Read the `.fs` image format specification](https://github.com/BrokeStudio/rainbow-net/blob/master/NES/rainbow-file-system-format.md).
 
-- Header (7 bytes)
-- File header (minimum 9 bytes)
-- File data
+Rainbow Toolbox loads an image completely into memory before allowing modifications. Modified images are rebuilt into a temporary file and finalized only after the complete new image has been written successfully.
 
-(_file header_ and _file data_ can be repeated)
+### Patch File Builder
 
-### Header format
+Compare two NES 2.0 ROMs, inspect the changed PRG-ROM and CHR-ROM sectors, and generate a Rainbow cartridge update patch.
 
-The format of the header is as follows:
+```console
+RainbowToolbox patch <rom-a.nes> <rom-b.nes> [-o <patch.rnbw>]
+```
 
-- 0-6: constant $52 $4E $42 $57 $46 $53 $1A ("RNBWFS" followed by MS-DOS end-of-file)
-- 7: file format version (only $00 supported for now)
+[Read the Patch File Builder documentation](docs/patch-file-builder.md).
 
-### File header
+[Read the official `.rnbw` patch format specification](https://github.com/BrokeStudio/rainbow-net/blob/master/NES/rainbow-patch-format.md).
 
-The format of the file header is as follows:
+## Graphical application
 
-- 0-2: file separator, constant $46 $3E ("F>")
-- 3-6: file data length (big endian)
-- 7: file name length
-- 8-?: file name
+The graphical application exposes both tools through its main menu.
 
-### File data
+## Command-line interface
 
-Raw data, length depends on file content.
+General help and version information are available with:
 
-## Patch File Builder
+```console
+RainbowToolbox --help
+RainbowToolbox --version
+```
 
-**_still WIP/not released_**
+The CLI provides two command families:
 
-If you want to update your cartridge, you may not want to erase the whole flash chip, but just the sectors that need to be updated. This tool allow you to create a patch file, between two ROM files, to be used with the Rainbow bootloader (or with your own code).
+```text
+patch         Create a Rainbow update patch.
+filesystem    Create and modify RNBWFS images (alias: fs).
+```
+
+See the tool-specific documentation above for complete commands, examples and format information.
+
+## Building
+
+See [COMPILING.md](COMPILING.md) for prerequisites and build instructions for Windows, Linux and macOS.
+
+## Third-party software
+
+This project uses:
+
+- [CLI11](https://github.com/CLIUtils/CLI11)
+- [Dear ImGui](https://github.com/ocornut/imgui)
+- [ImGuiFileBrowser](https://github.com/gallickgunner/ImGui-Addons)
+- [ImGui Memory Editor](https://github.com/ocornut/imgui_club)
+- [Premake](https://premake.github.io/)
+- [SDL2](https://www.libsdl.org/)
+- [termcolor](https://github.com/ikalnytskyi/termcolor)
+
+The GUI embeds the following fonts:
+
+- **Roboto Mono Regular**, licensed under the [SIL Open Font License 1.1](GUI/fonts/RobotoMonoRegular-License.txt)
+- **Rubik Regular**, licensed under the [SIL Open Font License 1.1](GUI/fonts/RubikRegular-License.txt)
+- **Font Awesome 6 Free**, licensed under the [SIL Open Font License 1.1](GUI/fonts/FontAwesome-License.txt)
+
+## AI usage and limitations
+
+Generative AI tools were used to assist with documentation and code review. All generated content was reviewed and validated by the project maintainers.
 
 ## Credits
 
-Developed by Antoine Gohin and Charles Ganne as part of his internship.
+Developed by Antoine Gohin / Broke Studio.
 
-[Dear ImGui](https://github.com/ocornut/imgui) is developed by Omar Cornut.
+Special thanks to Charles Ganne for his help during his internship.
 
 ## License
 
-Rainbow Tool Box is licensed under the MIT License, see LICENSE.txt for more information.
+Rainbow Toolbox is licensed under the MIT License. See [LICENSE.txt](LICENSE.txt) for details.
 
-## Contact
+## Support and feedback
 
-[![Mail](https://badgen.net/static/Email/contact@brokestudio.fr/black?icon=https%3A%2F%2Fbrokestudio.fr%2Fbs.svg)](mailto:contact@brokestudio.fr)
-[![Website](https://badgen.net/static/Website/https:%2F%2Fbrokestudio.fr/F0B92D?icon=https%3A%2F%2Fbrokestudio.fr%2Fbs.svg)](https://brokestudio.fr)
-[![Discord](https://badgen.net/discord/members/FffVMAuhTX?label=Discord&icon=discord)](https://www.github.gg/FffVMAuhTX)
-[![Twitter](https://badgen.net/static/twitter/@Broke_Studio?icon=twitter)](https://twitter.com/Broke_Studio)
+For bug reports and feature requests, [open an issue](https://github.com/BrokeStudio/RainbowToolbox/issues).
+
+Please include:
+
+- your operating system and application version
+- whether the issue affects the GUI or CLI
+- the command or operation involved
+- steps to reproduce the problem and any error messages
+
+You can also join the [Broke Studio Discord server](https://discord.gg/FffVMAuhTX) for questions and discussion.

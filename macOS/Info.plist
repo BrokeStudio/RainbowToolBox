@@ -3,16 +3,36 @@
 <plist version="1.0">
   <dict>
     <key>CFBundleExecutable</key>
-    <string>RainbowFileExplorer</string>
+    <string>RainbowToolbox</string>
+
     <key>CFBundleGetInfoString</key>
-    <string>Rainbow File Explorer</string>
+    <string>RainbowToolbox-macOS-app</string>
+
     <key>CFBundleIconFile</key>
-    <string>Rainbow.png</string>
+    <string>AppIcon.icns</string>
+
     <key>CFBundleIdentifier</key>
-    <string>inl.retro.gui</string>
+    <string>rainbow.toolbox</string>
+
     <key>CFBundleName</key>
-    <string>Rainbow File Explorer</string>
+    <string>RainbowToolbox-macOS-app</string>
+
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+
+    <key>CFBundleDisplayName</key>
+    <string>RainbowToolbox</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>0.0.2</string>
+
+    <key>CFBundleVersion</key>
+    <string>1</string>
+
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
+    <key>LSMinimumSystemVersion</key>
+    <string>12.0</string>
   </dict>
 </plist>
