@@ -1,6 +1,6 @@
 # Rainbow Toolbox
 
-[![Build Status](https://github.com/BrokeStudio/RainbowToolbox/actions/workflows/build/badge.svg)](https://github.com/BrokeStudio/RainbowToolbox/actions?workflow=build)
+[![Build Status](https://github.com/BrokeStudio/RainbowToolbox/actions/workflows/pipeline.yml/badge.svg)](https://github.com/BrokeStudio/RainbowToolbox/actions?workflow=build)
 ![GitHub License](https://badgen.net/github/license/BrokeStudio/RainbowToolbox)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
 
